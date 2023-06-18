@@ -6,6 +6,6 @@ defaults:
   - trainer: default.yaml
 
 
-ckpt_dir: ${hydra:runtime.cwd}/outputs/
+ckpt_dir: ${hydra:runtime.cwd}/outputs
 ckpt_file: 2023-06-17/23-55-58/lightning_logs/version_0/checkpoints/epoch=1-step=1408.ckpt
 ckpt_path: ${ckpt_dir}/${ckpt_file}

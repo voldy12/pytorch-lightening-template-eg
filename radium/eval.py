@@ -31,15 +31,9 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
         "trainer": trainer,
     }
 
-    if cfg.get("test"):
-        log.info("Starting testing!")
-        ckpt_path = ""
-        if ckpt_path == "":
-            log.warning(
-                "Best ckpt not found! Using current weights for testing...")
-            ckpt_path = None
-        trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
-        log.info(f"Best ckpt path: {ckpt_path}")
+
+    trainer.test(model=model, datamodule=datamodule, ckpt_path=cfg.ckpt_path)
+    log.info(f"Best ckpt path: {cfg.ckpt_path}")
 
     test_metrics = trainer.callback_metrics
 
