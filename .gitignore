@@ -144,6 +144,7 @@ dmypy.json
 *.tar
 *.tar.gz
 
+
 # Lightning-Hydra-Template
 configs/local/default.yaml
 /data/
@@ -154,3 +155,7 @@ lightning-template/
 dl-package/
 # Aim logging
 .aim
+
+#Folders
+PetImages
+PetImages_split

@@ -5,6 +5,7 @@ RUN pip install torch torchvision --no-cache-dir --index-url https://download.py
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev\
+    git\
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
