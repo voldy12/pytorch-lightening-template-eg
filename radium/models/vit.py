@@ -11,6 +11,7 @@ from torch.nn import functional as F
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 
+
 class PatchEmbedding(nn.Module):
     def __init__(
         self,
@@ -55,6 +56,7 @@ class PatchEmbedding(nn.Module):
         x += self.positional_emb
 
         return x
+
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, emb_size=768, num_heads=8, dropout=0):
@@ -103,6 +105,7 @@ class MultiHeadAttention(nn.Module):
 
         return out
 
+
 class ResidualAdd(nn.Module):
     def __init__(self, fn):
         super(ResidualAdd, self).__init__()
@@ -118,12 +121,14 @@ class ResidualAdd(nn.Module):
 
         return out
 
+
 FeedForwardBlock = lambda emb_size=768, expansion=4, drop_p=0.0: nn.Sequential(
     nn.Linear(emb_size, expansion * emb_size),
     nn.GELU(),
     nn.Dropout(drop_p),
     nn.Linear(expansion * emb_size, emb_size),
 )
+
 
 class TransformerEncoderBlock(nn.Sequential):
     def __init__(
@@ -148,11 +153,13 @@ class TransformerEncoderBlock(nn.Sequential):
             ),
         )
 
+
 class TransformerEncoder(nn.Sequential):
     def __init__(self, depth=12, **kwargs):
         super(TransformerEncoder, self).__init__(
             *(TransformerEncoderBlock(**kwargs) for _ in range(depth))
         )
+
 
 class ClassificationHead(nn.Sequential):
     def __init__(self, emb_size=768, num_classes=1000):
@@ -163,6 +170,7 @@ class ClassificationHead(nn.Sequential):
             nn.LayerNorm(emb_size),
             nn.Linear(emb_size, num_classes),
         )
+
 
 class ViT(nn.Sequential):
     def __init__(
@@ -185,6 +193,7 @@ class ViT(nn.Sequential):
             TransformerEncoder(depth, emb_size=emb_size, **kwargs),
             ClassificationHead(emb_size, num_classes),
         )
+
 
 class VitLitModule(LightningModule):
     def __init__(

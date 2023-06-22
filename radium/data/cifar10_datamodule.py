@@ -37,7 +37,7 @@ class CIFAR10DataModule(LightningDataModule):
     def __init__(
         self,
         data_dir: str = "data/",
-        train_val_test_split: List[float] = [.7, .1, .2],
+        train_val_test_split: List[float] = [0.7, 0.1, 0.2],
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
@@ -47,7 +47,12 @@ class CIFAR10DataModule(LightningDataModule):
 
         # data transformations
         self.transforms = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize(mean=(0.4914, 0.4822, 0.4465), std=(0.247, 0.243, 0.261))]
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=(0.4914, 0.4822, 0.4465), std=(0.247, 0.243, 0.261)
+                ),
+            ]
         )
 
         self.data_train: Optional[Dataset] = None

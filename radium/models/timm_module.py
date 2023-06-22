@@ -3,6 +3,7 @@ import torch
 from lightning import LightningModule
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
+
 # from einops import repeat
 
 
@@ -16,7 +17,7 @@ class TIMMLitModule(LightningModule):
         # also ensures init params will be stored in ckpt
         # ignoring net as the model weights themselves are not a hyperparam
         self.save_hyperparameters(logger=False, ignore=["net"])
-        
+
         self.net = net
         # loss function
         self.criterion = torch.nn.CrossEntropyLoss()
@@ -36,7 +37,7 @@ class TIMMLitModule(LightningModule):
 
     def forward(self, x: torch.Tensor):
         # small fix to work with mnist
-        
+
         # Uncomment this if you want to use the model with 1 channel images like MNIST
         # if x.shape[1] == 1:
         #     x = repeat(x, "b c h w -> b (repeat c) h w", repeat=3)

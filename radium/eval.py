@@ -31,7 +31,6 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
         "trainer": trainer,
     }
 
-
     trainer.test(model=model, datamodule=datamodule, ckpt_path=cfg.ckpt_path)
     log.info(f"Best ckpt path: {cfg.ckpt_path}")
 

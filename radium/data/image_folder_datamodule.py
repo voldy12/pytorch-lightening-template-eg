@@ -6,6 +6,7 @@ from torchvision import transforms as T
 from typing import Optional
 from torch.utils.data import Dataset, DataLoader
 
+
 class ImageFolderDataModule(LightningDataModule):
     def __init__(
         self,
