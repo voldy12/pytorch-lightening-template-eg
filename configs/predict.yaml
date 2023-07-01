@@ -1,0 +1,25 @@
+defaults:
+  - data: image_folder.yaml
+  - models: vit.yaml
+  - paths: default.yaml
+  - trainer: default.yaml
+  - logger: null
+  - callbacks: default
+  - _self_
+
+
+models:
+  net:
+    _target_: radium.models.vit.ViT
+    in_channels : 3
+    patch_size : 4
+    emb_size : 64
+    img_size : 32
+    depth : 6
+
+  num_classes: 2
+  topk: 2
+
+ckpt_dir: ${hydra:runtime.cwd}/outputs/
+ckpt_file: 2023-07-01/09-33-03/checkpoints/last.ckpt
+test_ckpt_path: ${ckpt_dir}/${ckpt_file}

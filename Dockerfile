@@ -4,6 +4,7 @@ RUN pip install -U pip --no-cache-dir
 RUN pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    g++ \
     python3-dev\
     git\
     && \

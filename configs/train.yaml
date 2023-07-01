@@ -9,7 +9,9 @@ defaults:
   - paths: default
   - trainer: default
   - callbacks: default
-  
+  - hydra: default.yaml
+  - logger: null
+
   # experiment configs allow for version control of specific hyperparameters
   # e.g. best hyperparameters for given model and datamodule
   - experiment: null

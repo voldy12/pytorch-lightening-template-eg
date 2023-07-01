@@ -1,6 +1,7 @@
 _target_: radium.models.vit.VitLitModule
 
 num_classes: 1000
+topk: 5
 
 optimizer:
   _target_: torch.optim.Adam
@@ -14,3 +15,12 @@ scheduler:
   mode: min
   factor: 0.1
   patience: 10
+
+net:
+  _target_: radium.models.vit.ViT
+  in_channels : 3
+  depth : 6
+  patch_size : 4
+  emb_size : 64
+  img_size : 32
+  num_classes: ${models.num_classes}

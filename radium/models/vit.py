@@ -200,20 +200,16 @@ class VitLitModule(LightningModule):
         self,
         optimizer: torch.optim.Optimizer,
         scheduler: torch.optim.lr_scheduler,
+        net: ViT,
         num_classes=10,
+        topk=3,
+
     ):
         super().__init__()
 
-        self.save_hyperparameters(logger=False, ignore=["model"])
+        self.save_hyperparameters(logger=False, ignore=["net"])
 
-        self.model = ViT(
-            in_channels=3,
-            patch_size=4,
-            emb_size=64,
-            img_size=32,
-            depth=6,
-            num_classes=num_classes,
-        )
+        self.model = net
 
         # loss function
         self.criterion = torch.nn.CrossEntropyLoss()
@@ -245,6 +241,19 @@ class VitLitModule(LightningModule):
         preds = torch.argmax(logits, dim=1)
         return loss, preds, y
 
+    def model_predict_step(self, batch: Any):
+        x, y = batch
+        logits = self.forward(x)
+        return logits
+    
+    def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> Any:
+
+        logits = self.model_predict_step(batch)
+        prob = F.softmax(logits, dim=1)
+        top_p, top_class = prob.topk(self.hparams.topk, dim = 1)
+        #predictions = torch.nn.functional.softmax(logits, dim=1)
+        return top_p.cpu().tolist()
+    
     def training_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.model_step(batch)
 

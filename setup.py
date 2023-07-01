@@ -16,6 +16,7 @@ setup(
         "console_scripts": [
             "radium_train = radium.train:main",
             "radium_eval = radium.eval:main",
+            "radium_predict = radium.predict:main"
         ]
     },
 )

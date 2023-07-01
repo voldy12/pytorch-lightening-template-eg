@@ -1,8 +1,15 @@
-from typing import Tuple, Dict
+import os
+from logging import Logger
+from typing import Dict, List, Tuple
 
-import lightning as L
-import torch
 import hydra
+import lightning as L
+import mlflow
+import mlflow.pytorch
+import torch
+from lightning import Callback, LightningDataModule, LightningModule, Trainer
+from lightning.pytorch.loggers.mlflow import MLFlowLogger
+from mlflow import MlflowClient
 from omegaconf import DictConfig
 
 from radium import utils
@@ -22,8 +29,14 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
     log.info(f"Instantiating model <{cfg.models._target_}>")
     model: LightningModule = hydra.utils.instantiate(cfg.models)
 
+    log.info("Instantiating loggers...")
+    logger: List[Logger] = utils.instantiate_loggers(cfg.get("logger"))
+    
+    log.info("Instantiating callbacks...")
+    callbacks: List[Callback] = utils.instantiate_callbacks(cfg.get("callbacks"))
+    
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
-    trainer: Trainer = hydra.utils.instantiate(cfg.trainer)
+    trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
 
     object_dict = {
         "cfg": cfg,
@@ -40,13 +53,24 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     if cfg.get("test"):
         log.info("Starting testing!")
-        ckpt_path = ""
+        ckpt_path = ckpt_path = trainer.checkpoint_callback.best_model_path
         if ckpt_path == "":
             log.warning("Best ckpt not found! Using current weights for testing...")
             ckpt_path = None
         trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
         log.info(f"Best ckpt path: {ckpt_path}")
-
+        
+        for logger_ in logger:
+            if isinstance(logger_, MLFlowLogger):
+                ckpt = torch.load(ckpt_path)
+                model.load_state_dict(ckpt["state_dict"])
+                os.environ['MLFLOW_RUN_ID'] = logger_.run_id
+                os.environ['MLFLOW_EXPERIMENT_ID'] = logger_.experiment_id
+                os.environ['MLFLOW_EXPERIMENT_NAME'] = logger_._experiment_name
+                os.environ['MLFLOW_TRACKING_URI'] = logger_._tracking_uri
+                mlflow.pytorch.log_model(model, "model")
+                break
+            
     test_metrics = trainer.callback_metrics
 
     # merge train and test metrics
