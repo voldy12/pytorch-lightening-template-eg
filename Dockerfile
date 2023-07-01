@@ -1,7 +1,6 @@
 FROM python:3.10.12-slim-buster
 
 RUN pip install -U pip --no-cache-dir
-RUN pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
@@ -14,4 +13,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # COPY . .
 # COPY ../requirements.txt .
 
-# RUN pip install -r requirements.txt --no-cache-dir
+# RUN pip install -r requirements.txt --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu
