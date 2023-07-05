@@ -1,0 +1,38 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=cat_dog
+
+defaults:
+  - override /data: cifar10.yaml
+  - override /models: vit.yaml
+  - override /trainer: default.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+seed: 12345
+
+trainer:
+  min_epochs: 0
+  max_epochs: 2
+  gradient_clip_val: 0.5
+
+models:
+  net:
+    _target_: radium.models.vit.ViT
+    in_channels : 3
+    patch_size : 4
+    emb_size : 64
+    img_size : 32
+    depth : 6
+
+  num_classes: 10
+  topk: 2
+
+
+ckpt_dir: ${hydra:runtime.cwd}/outputs/
+ckpt_file: ${now:%Y-%m-%d_%H-%M-%S}.ckpt
+test_ckpt_path: ${ckpt_dir}/${ckpt_file}
+
+compile: False
